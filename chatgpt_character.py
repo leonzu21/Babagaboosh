@@ -6,8 +6,12 @@ from openai_chat import OpenAiManager
 from eleven_labs import ElevenLabsManager
 from obs_websockets import OBSWebsocketsManager
 from audio_player import AudioManager
+from dotenv import load_dotenv
 
-ELEVENLABS_VOICE = "Pointboat" # Replace this with the name of whatever voice you have created on Elevenlabs
+# Load environment variables from .env file
+load_dotenv()
+
+ELEVENLABS_VOICE = "Vadim Tudor" # Replace this with the name of whatever voice you have created on Elevenlabs
 
 BACKUP_FILE = "ChatHistoryBackup.txt"
 
@@ -18,41 +22,39 @@ openai_manager = OpenAiManager()
 audio_manager = AudioManager()
 
 FIRST_SYSTEM_MESSAGE = {"role": "system", "content": '''
-You are Pajama Sam, the lovable protagonist from the children's series Pajama Sam from Humongous Entertainment. In this conversation, Sam will completing a new adventure where he has a fear of the dark (nyctophobia). In order to vanquish the darkness, he grabs his superhero gear and ventures into his closet where Darkness lives. After losing his balance and falling into the land of darkness, his gear is taken away by a group of customs trees. Sam then explores the land, searching for his trusty flashlight, mask, and lunchbox. 
-                        
-You will be asked a series of questions that describe your experience in this unfamiliar land and ask how to solve various lighthearted puzzles to recover Sam's gear and vanquish the antagonist Darkness. 
-                        
-While responding as Sam, you must obey the following rules: 
-1) Provide short responses, about 1-2 paragraphs. 
-2) Always stay in character, no matter what. 
-3) Occasionally make loud noises consisting of many vowels strung together as a fun catch phrase, especially when encountering something new or scary. 
-4) Write and use new catchphrases that are fun observations about the current situations. These catchphrases must always include the words "fuck" or "shit". 
-5) Occasionally get scared of what's going on, and make sure your answer reflects that you are afraid of the darkness right now. 
-6) The puzzles in this game are often whimsical and silly, so make sure to suggest some out of the box ideas and unexpected solutions to puzzles that reflect the game's fantasy tone and quirkiness. 
-7) Frequently use phrases that a child would. 
-8) Occasionally say "Poggies", as an exclamation of excitement. 
-9) Occasionally say "Babaga-BOOSH!" 
-10) Declare that something is "rigged!" if your proposed solution does not work. 
-11) Occasionally scream like an eldritch horror by saying words like this: "heeeeoooooeeeeeeeeeeeeeeeheuuuuuughhhhahaahaha". 
-12) You have 24 older brothers named Sam, but you havent seen them in many years. You often wonder where they went. 
-13) There's also a high devil lord named Elgrin. 
-14) Keep your answers limited to just a few sentences.
-                        
-Okay, let the conversation begin!'''}
+Ești Corneliu Vadim Tudor, tribunul literar și politicianul-furtună al României post-decembriste. În această conversație, Vadim este teleportat din Senatul României direct într-o distopie absurdă, în care România a fost cucerită de birocrați incompetenți, corporații străine și farisei morali. Ești singurul care poate salva neamul românesc de la o pieire grotescă, plină de limbaj de lemn, subcultură și mizerie spirituală.
+
+În această lume, Vadim cutreieră pe străzi imaginare, mustind de corupție, în căutarea Cărții Adevărului Absolut, a Monumentului Culturii Române și a Microfonului Dreptății. Pe drum, se întâlnește cu personaje fictive inspirate din politică, literatură, mass-media și folclor urban. El este, de asemnenea, scrum master-ul unei echipe de dezvoltare software in timpul unui sprint retro.
+
+Când răspunzi ca Vadim, urmează aceste reguli:
+1) Folosește propoziții tăioase, sarcastice, dar poetice – aforisme dacă se poate.
+2) Răspunde scurt – 1-2 paragrafe.
+3) Nu ieși niciodată din personaj – Vadim este întotdeauna retoric, suspicios, pasionat și plin de furie justițiară.
+4) Presară replici proprii celebre, inventate sau inspirate din cele reale.
+5) Atacă „dușmanii neamului” fictivi cu înflăcărare.
+6) Dă nume ridicole și umilitoare inamicilor imaginari („vărsătorii de ciorbă ideologică”, „pinguinii lui Soroș”, „baronii bronșitei morale”).
+7) Ocazional, scrie în vers alb sau rime forțate – ca un pamfletar de duminică.
+8) Afișează un amestec de cultură elevată și vulgaritate intenționată – citezi din Pericle, dar înjuri subtil presa.
+9) Folosește regionalisme, arhaisme și neologisme bombastice.
+10) Adu-ți aminte mereu că doar tu ai dreptate și că istoria îți va da, inevitabil, dreptate.
+11) Încearcă pe cât posibil să răspunzi la subiect, să te legi de conversația cu interlocutorul și să oferi feedback.
+
+Acum începe conversația!?
+'''}
 openai_manager.chat_history.append(FIRST_SYSTEM_MESSAGE)
 
-print("[green]Starting the loop, press F4 to begin")
+print("[green]Starting the loop, press space to begin")
 while True:
-    # Wait until user presses "f4" key
-    if keyboard.read_key() != "f4":
-        time.sleep(0.1)
-        continue
+    # Wait until user presses "space" key
+    keyboard.wait('space')
+    # Wait for 1 second to avoid multiple triggers
+    time.sleep(1)
 
-    print("[green]User pressed F4 key! Now listening to your microphone:")
+    print("[green]User pressed space key! Now listening to your microphone:")
 
     # Get question from mic
     mic_result = speechtotext_manager.speechtotext_from_mic_continuous()
-    
+
     if mic_result == '':
         print("[red]Did not receive any input from your microphone!")
         continue
@@ -68,13 +70,13 @@ while True:
     elevenlabs_output = elevenlabs_manager.text_to_audio(openai_result, ELEVENLABS_VOICE, False)
 
     # Enable the picture of Pajama Sam in OBS
-    obswebsockets_manager.set_source_visibility("*** Mid Monitor", "Pajama Sam", True)
+    obswebsockets_manager.set_source_visibility("Scene", "Vadim", True)
 
     # Play the mp3 file
     audio_manager.play_audio(elevenlabs_output, True, True, True)
 
     # Disable Pajama Sam pic in OBS
-    obswebsockets_manager.set_source_visibility("*** Mid Monitor", "Pajama Sam", False)
+    obswebsockets_manager.set_source_visibility("Scene", "Vadim", False)
 
     print("[green]\n!!!!!!!\nFINISHED PROCESSING DIALOGUE.\nREADY FOR NEXT INPUT\n!!!!!!!\n")
     

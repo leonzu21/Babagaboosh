@@ -16,7 +16,7 @@ class SpeechToTextManager:
         except TypeError:
             exit("Ooops! You forgot to set AZURE_TTS_KEY or AZURE_TTS_REGION in your environment!")
         
-        self.azure_speechconfig.speech_recognition_language="en-US"
+        self.azure_speechconfig.speech_recognition_language="ro-RO"
         
     def speechtotext_from_mic(self):
         
@@ -106,8 +106,13 @@ class SpeechToTextManager:
         print(f"\n\nHeres the result we got from contiuous file read!\n\n{final_result}\n\n")
         return final_result
 
-    def speechtotext_from_mic_continuous(self, stop_key='p'):
-        self.azure_speechrecognizer = speechsdk.SpeechRecognizer(speech_config=self.azure_speechconfig)
+    def speechtotext_from_mic_continuous(self, stop_key='p35'):
+
+        self.azure_audioconfig = speechsdk.audio.AudioConfig(device_name="Vadim Input")
+
+        self.azure_speechrecognizer = speechsdk.SpeechRecognizer(speech_config=self.azure_speechconfig, audio_config=self.azure_audioconfig)
+        print("Azure Speech Recognizer created: \n")
+        print(self.azure_speechrecognizer)
 
         done = False
         
@@ -147,18 +152,27 @@ class SpeechToTextManager:
 
         while not done:
             # METHOD 1 - Press the stop key. This is 'p' by default but user can provide different key
-            if keyboard.read_key() == stop_key:
-                print("\nEnding azure speech recognition\n")
-                self.azure_speechrecognizer.stop_continuous_recognition_async()
-                break
+            # print(f"Press '{stop_key}' to stop recognition.")
+            # print(keyboard.read_key())
+            # if keyboard.read_key() == stop_key:
+            #     print("\nEnding azure speech recognition\n")
+            #     self.azure_speechrecognizer.stop_continuous_recognition_async()
+            #     break
             
             # METHOD 2 - User must type "stop" into cmd window
-            #print('type "stop" then enter when done')
-            #stop = input()
-            #if (stop.lower() == "stop"):
+            # print('type "stop" then enter when done')
+            # stop = input()
+            # if (stop.lower() == "stop"):
             #    print('Stopping async recognition.')
             #    self.azure_speechrecognizer.stop_continuous_recognition_async()
             #    break
+
+            # METHOD 3 - Press the "esc" key to stop recognition
+            print("Press 'esc' to stop recognition.")
+            keyboard.wait('esc')
+            print("\nEnding azure speech recognition\n")
+            self.azure_speechrecognizer.stop_continuous_recognition_async()
+            break
 
             # Other methods: https://stackoverflow.com/a/57644349
 
